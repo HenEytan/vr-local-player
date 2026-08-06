@@ -14,7 +14,8 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class StereoRenderer(
-    private val duplicateSbs: Boolean,
+    initialDuplicateSbs: Boolean,
+    initial: VrSettings.Values,
     private val onSurfaceReady: (Surface) -> Unit
 ) : android.opengl.GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
 
@@ -25,16 +26,25 @@ class StereoRenderer(
     private var videoSurface: Surface? = null
 
     private val stMatrix = FloatArray(16)
+    private val modelMatrix = FloatArray(16)
     private var frameAvailable = false
 
     private var program = 0
     private var aPositionHandle = 0
     private var aTexCoordHandle = 0
     private var uStMatrixHandle = 0
+    private var uModelMatrixHandle = 0
     private var uTextureHandle = 0
 
     private var surfaceWidth = 0
     private var surfaceHeight = 0
+
+    @Volatile var duplicateSbs: Boolean = initialDuplicateSbs
+    @Volatile var scale: Float = initial.scale
+    @Volatile var panX: Float = initial.panX
+    @Volatile var panY: Float = initial.panY
+    @Volatile var gap: Float = initial.gap
+    @Volatile var ipdShift: Float = initial.ipdShift
 
     private val quadVertices = floatArrayOf(
         -1f, -1f, 0f,
@@ -64,9 +74,10 @@ class StereoRenderer(
         attribute vec4 aPosition;
         attribute vec2 aTexCoord;
         uniform mat4 uStMatrix;
+        uniform mat4 uModelMatrix;
         varying vec2 vTexCoord;
         void main() {
-            gl_Position = aPosition;
+            gl_Position = uModelMatrix * aPosition;
             vTexCoord = (uStMatrix * vec4(aTexCoord, 0.0, 1.0)).xy;
         }
     """.trimIndent()
@@ -93,6 +104,7 @@ class StereoRenderer(
         aPositionHandle = GLES20.glGetAttribLocation(program, "aPosition")
         aTexCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         uStMatrixHandle = GLES20.glGetUniformLocation(program, "uStMatrix")
+        uModelMatrixHandle = GLES20.glGetUniformLocation(program, "uModelMatrix")
         uTextureHandle = GLES20.glGetUniformLocation(program, "uTexture")
 
         Matrix.setIdentityM(stMatrix, 0)
@@ -123,24 +135,33 @@ class StereoRenderer(
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
         if (duplicateSbs) {
-            GLES20.glViewport(0, 0, surfaceWidth / 2, surfaceHeight)
-            drawQuad()
-            GLES20.glViewport(surfaceWidth / 2, 0, surfaceWidth / 2, surfaceHeight)
-            drawQuad()
+            val gapPx = (gap.coerceIn(0f, 0.9f) * surfaceWidth).toInt()
+            val eyeWidth = ((surfaceWidth - gapPx) / 2).coerceAtLeast(1)
+
+            GLES20.glViewport(0, 0, eyeWidth, surfaceHeight)
+            drawQuad(panX + ipdShift, panY, scale)
+
+            GLES20.glViewport(surfaceWidth - eyeWidth, 0, eyeWidth, surfaceHeight)
+            drawQuad(panX - ipdShift, panY, scale)
         } else {
             GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight)
-            drawQuad()
+            drawQuad(panX, panY, scale)
         }
     }
 
-    private fun drawQuad() {
+    private fun drawQuad(offsetX: Float, offsetY: Float, quadScale: Float) {
         GLES20.glUseProgram(program)
+
+        Matrix.setIdentityM(modelMatrix, 0)
+        Matrix.translateM(modelMatrix, 0, offsetX * 2f, offsetY * 2f, 0f)
+        Matrix.scaleM(modelMatrix, 0, quadScale, quadScale, 1f)
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId)
         GLES20.glUniform1i(uTextureHandle, 0)
 
         GLES20.glUniformMatrix4fv(uStMatrixHandle, 1, false, stMatrix, 0)
+        GLES20.glUniformMatrix4fv(uModelMatrixHandle, 1, false, modelMatrix, 0)
 
         vertexBuffer.position(0)
         GLES20.glEnableVertexAttribArray(aPositionHandle)

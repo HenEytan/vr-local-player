@@ -12,9 +12,13 @@ class StereoGLSurfaceView @JvmOverloads constructor(
     lateinit var stereoRenderer: StereoRenderer
         private set
 
-    fun init(duplicateSbs: Boolean, onSurfaceReady: (android.view.Surface) -> Unit) {
+    fun init(
+        duplicateSbs: Boolean,
+        initialSettings: VrSettings.Values,
+        onSurfaceReady: (android.view.Surface) -> Unit
+    ) {
         setEGLContextClientVersion(2)
-        stereoRenderer = StereoRenderer(duplicateSbs, onSurfaceReady)
+        stereoRenderer = StereoRenderer(duplicateSbs, initialSettings, onSurfaceReady)
         setRenderer(stereoRenderer)
         renderMode = RENDERMODE_CONTINUOUSLY
     }

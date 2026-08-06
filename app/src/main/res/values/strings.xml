@@ -8,4 +8,15 @@
     <string name="mode_flat">Play Flat (Normal)</string>
     <string name="already_sbs_hint">If the video is already Side by Side, disable duplication in settings below.</string>
     <string name="no_video_selected">No video selected yet.</string>
+
+    <string name="controls_title">VR Controls</string>
+    <string name="control_vr_mode">VR Duplicate Mode</string>
+    <string name="control_zoom">Zoom</string>
+    <string name="control_pan_x">Horizontal Position</string>
+    <string name="control_pan_y">Vertical Position</string>
+    <string name="control_gap">Space Between Videos</string>
+    <string name="control_ipd">Eye Alignment (IPD)</string>
+    <string name="control_reset">Reset to Default</string>
+    <string name="control_done">Done</string>
+    <string name="control_toggle_desc">Open VR controls</string>
 </resources>
