@@ -53,11 +53,15 @@ class StereoRenderer(
         1f, 1f, 0f
     )
 
+    // Texture coords matching the quad above. Left as the natural (unflipped) order.
+    // videoSurfaceTexture.getTransformMatrix() already carries whatever flip the
+    // producer needs, so pre-flipping here as well was double-flipping the frame
+    // (i.e. rendering it upside down).
     private val quadTexCoords = floatArrayOf(
-        0f, 1f,
-        1f, 1f,
         0f, 0f,
-        1f, 0f
+        1f, 0f,
+        0f, 1f,
+        1f, 1f
     )
 
     private val vertexBuffer: FloatBuffer = ByteBuffer.allocateDirect(quadVertices.size * 4)
