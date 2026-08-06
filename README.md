@@ -11,8 +11,8 @@ with a live control panel for zoom, position, eye gap, and eye alignment.
 - `MainActivity` lets you pick a local video file (`ACTION_GET_CONTENT`,
   `video/*`) and choose whether to duplicate it into stereo SBS or play flat.
 - `VrPlayerActivity` hosts a `StereoGLSurfaceView` (custom `GLSurfaceView`)
-  plus a slide up control panel (tap the gear icon, top right) for live
-  tuning of:
+  plus a translucent side panel (tap the gear icon, top right) for live
+  tuning of, with the video still visible behind it:
   - **Zoom** (50%, 200%)
   - **Horizontal / Vertical position** (pan the video within each eye)
   - **Space between videos** (the gap between the left/right eye views)

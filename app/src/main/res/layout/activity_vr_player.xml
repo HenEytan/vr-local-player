@@ -10,47 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton
-        android:id="@+id/btnToggleControls"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_circle_button"
-        android:contentDescription="@string/control_toggle_desc"
-        android:padding="13dp"
-        android:src="@drawable/ic_settings" />
-
     <ScrollView
         android:id="@+id/panelScroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:fillViewport="true"
+        android:scrollbars="none"
         android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/panelControls"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/bg_panel"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="20dp">
-
-            <View
-                android:layout_width="40dp"
-                android:layout_height="4dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="14dp"
-                android:background="@drawable/bg_panel_handle" />
+            android:background="@drawable/bg_side_panel"
+            android:padding="22dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/controls_title"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
@@ -59,7 +40,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -69,7 +50,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_vr_mode"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchVrMode"
@@ -83,7 +64,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:background="@color/surface_stroke" />
 
             <LinearLayout
@@ -97,7 +78,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_zoom"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tvZoomValue"
@@ -105,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:text="100%"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <SeekBar
@@ -113,7 +94,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:max="150"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent" />
@@ -129,7 +110,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_pan_x"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tvPanXValue"
@@ -137,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:text="0%"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <SeekBar
@@ -145,7 +126,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:max="100"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent" />
@@ -161,7 +142,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_pan_y"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tvPanYValue"
@@ -169,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:text="0%"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <SeekBar
@@ -177,7 +158,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:max="100"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent" />
@@ -193,7 +174,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_gap"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tvGapValue"
@@ -201,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:text="0%"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <SeekBar
@@ -209,7 +190,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="16dp"
                 android:max="100"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent" />
@@ -225,7 +206,7 @@
                     android:layout_weight="1"
                     android:text="@string/control_ipd"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tvIpdValue"
@@ -233,7 +214,7 @@
                     android:layout_height="wrap_content"
                     android:text="0%"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <SeekBar
@@ -241,44 +222,49 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="18dp"
+                android:layout_marginBottom="20dp"
                 android:max="100"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent" />
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResetControls"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="46dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/control_reset"
+                android:textColor="@color/accent"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                app:strokeColor="@color/accent"
+                app:strokeWidth="1.5dp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnResetControls"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/control_reset"
-                    android:textColor="@color/accent"
-                    app:cornerRadius="14dp"
-                    app:strokeColor="@color/accent"
-                    app:strokeWidth="1.5dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDoneControls"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="@string/control_done"
-                    android:textColor="@color/bg_top"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/accent"
-                    app:cornerRadius="14dp" />
-
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDoneControls"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="@string/control_done"
+                android:textColor="@color/bg_top"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/accent"
+                app:cornerRadius="14dp" />
 
         </LinearLayout>
 
     </ScrollView>
+
+    <ImageButton
+        android:id="@+id/btnToggleControls"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_circle_button"
+        android:contentDescription="@string/control_toggle_desc"
+        android:padding="13dp"
+        android:src="@drawable/ic_settings" />
 
 </FrameLayout>
