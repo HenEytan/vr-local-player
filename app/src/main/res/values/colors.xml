@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Core brand palette: deep space background with a cyan/violet VR accent -->
+    <color name="bg_top">#FF0B0F1A</color>
+    <color name="bg_bottom">#FF161B2E</color>
+    <color name="surface">#FF1D2338</color>
+    <color name="surface_stroke">#FF2E3654</color>
+
+    <color name="accent">#FF4DE8FF</color>
+    <color name="accent_violet">#FF8B5CF6</color>
+
+    <color name="text_primary">#FFF5F7FF</color>
+    <color name="text_secondary">#FFA6ADC8</color>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VR Local Player</string>
+    <string name="tagline">Watch your own videos in VR</string>
+    <string name="label_video_file">Video file</string>
+    <string name="pick_video">Choose Video</string>
+    <string name="mode_sbs_duplicate">Play in VR (Duplicate SBS)</string>
+    <string name="mode_flat">Play Flat (Normal)</string>
+    <string name="already_sbs_hint">If the video is already Side by Side, disable duplication in settings below.</string>
+    <string name="no_video_selected">No video selected yet.</string>
+</resources>
