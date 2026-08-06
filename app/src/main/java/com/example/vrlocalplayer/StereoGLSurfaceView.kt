@@ -18,4 +18,10 @@ class StereoGLSurfaceView @JvmOverloads constructor(
         setRenderer(stereoRenderer)
         renderMode = RENDERMODE_CONTINUOUSLY
     }
+
+    fun releaseRendererIfReady() {
+        if (::stereoRenderer.isInitialized) {
+            stereoRenderer.release()
+        }
+    }
 }

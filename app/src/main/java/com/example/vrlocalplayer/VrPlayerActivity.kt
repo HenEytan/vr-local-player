@@ -72,8 +72,8 @@ class VrPlayerActivity : AppCompatActivity() {
         super.onDestroy()
         player?.release()
         player = null
-        if (::glView.isInitialized && glView::stereoRenderer.isInitialized) {
-            glView.stereoRenderer.release()
+        if (::glView.isInitialized) {
+            glView.releaseRendererIfReady()
         }
     }
 }
