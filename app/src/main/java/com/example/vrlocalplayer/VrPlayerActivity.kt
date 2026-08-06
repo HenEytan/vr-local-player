@@ -9,14 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 
-/**
- * Full-screen VR playback activity.
- *
- * Local video files are decoded normally by ExoPlayer, which is pointed at a
- * Surface backed by an OpenGL external texture (see StereoRenderer). The GL
- * renderer then either duplicates that single decoded frame into a left/right
- * pair for a Cardboard-style side-by-side VR view, or draws it once, flat.
- */
 class VrPlayerActivity : AppCompatActivity() {
 
     companion object {
@@ -30,7 +22,6 @@ class VrPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Keep the screen on and hide system bars for an immersive VR view.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hideSystemUi()
 

@@ -9,11 +9,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import android.widget.TextView
 
-/**
- * Landing screen: lets the user pick a local video file (from device storage)
- * and choose whether it should be duplicated into a side by side stereo pair
- * for VR / Google Cardboard style headsets, or played flat/normal.
- */
 class MainActivity : AppCompatActivity() {
 
     private var selectedUri: Uri? = null
@@ -22,14 +17,12 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
                 selectedUri = uri
-                // Persist read permission across the launched player activity / process restarts.
                 try {
                     contentResolver.takePersistableUriPermission(
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
                 } catch (_: SecurityException) {
-                    // Some providers do not support persistable permissions; safe to ignore.
                 }
                 findViewById<TextView>(R.id.tvSelectedFile).text = uri.lastPathSegment ?: uri.toString()
                 findViewById<MaterialButton>(R.id.btnPlay).isEnabled = true

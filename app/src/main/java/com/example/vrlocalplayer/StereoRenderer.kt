@@ -13,13 +13,6 @@ import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-/**
- * Renders the decoded video frame (delivered via an external OES SurfaceTexture,
- * which ExoPlayer writes into directly) either:
- *  - duplicated into both halves of the screen (classic Cardboard / Google VR
- *    side-by-side stereo, used when the source video is a normal flat/mono video), or
- *  - drawn once, full screen (flat playback).
- */
 class StereoRenderer(
     private val duplicateSbs: Boolean,
     private val onSurfaceReady: (Surface) -> Unit
@@ -43,7 +36,6 @@ class StereoRenderer(
     private var surfaceWidth = 0
     private var surfaceHeight = 0
 
-    // Full-screen quad, positions in NDC space.
     private val quadVertices = floatArrayOf(
         -1f, -1f, 0f,
         1f, -1f, 0f,
@@ -51,7 +43,6 @@ class StereoRenderer(
         1f, 1f, 0f
     )
 
-    // Texture coords matching the quad above (v flipped since SurfaceTexture is top-down).
     private val quadTexCoords = floatArrayOf(
         0f, 1f,
         1f, 1f,
@@ -106,8 +97,6 @@ class StereoRenderer(
 
         Matrix.setIdentityM(stMatrix, 0)
 
-        // Hand the Surface back to the caller (main thread) so ExoPlayer can
-        // start decoding video frames directly into this GL texture.
         mainHandler.post { onSurfaceReady(videoSurface!!) }
     }
 
@@ -134,10 +123,8 @@ class StereoRenderer(
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
         if (duplicateSbs) {
-            // Left eye: left half of the screen.
             GLES20.glViewport(0, 0, surfaceWidth / 2, surfaceHeight)
             drawQuad()
-            // Right eye: right half of the screen, same frame duplicated.
             GLES20.glViewport(surfaceWidth / 2, 0, surfaceWidth / 2, surfaceHeight)
             drawQuad()
         } else {
