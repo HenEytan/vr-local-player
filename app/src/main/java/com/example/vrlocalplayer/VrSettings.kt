@@ -14,11 +14,11 @@ object VrSettings {
     private const val KEY_DUPLICATE = "duplicate_sbs"
 
     const val SCALE_MIN = 0.5f
-    const val SCALE_MAX = 2.0f
+    const val SCALE_MAX = 4.0f
     const val SCALE_DEFAULT = 1.0f
 
-    const val PAN_MIN = -0.5f
-    const val PAN_MAX = 0.5f
+    const val PAN_MIN = -1.5f
+    const val PAN_MAX = 1.5f
     const val PAN_DEFAULT = 0.0f
 
     const val GAP_MIN = 0.0f

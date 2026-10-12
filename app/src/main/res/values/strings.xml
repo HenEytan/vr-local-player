@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">VR Local Player</string>
+    <string name="open_in_vr">Play in VR</string>
     <string name="tagline">Watch your own videos in VR</string>
     <string name="label_video_file">Video file</string>
     <string name="pick_video">Choose Video</string>
@@ -19,4 +20,16 @@
     <string name="control_reset">Reset to Default</string>
     <string name="control_done">Done</string>
     <string name="control_toggle_desc">Open VR controls</string>
+
+    <string name="timeline_play_pause">Play or pause</string>
+    <string name="timeline_rewind">Back 10 seconds</string>
+    <string name="timeline_forward">Forward 10 seconds</string>
+    <string name="resumed_at">Resumed at %1$s</string>
+    <string name="file_unavailable">This video can\'t be opened any more. Choose it again.</string>
+    <string name="cannot_play">This video format can\'t be played on this device.</string>
+
+    <string name="recent_title">Continue watching</string>
+    <string name="recent_progress">%1$s / %2$s</string>
+    <string name="recent_removed">Removed from Continue watching</string>
+    <string name="secure_folder_hint">Videos in Samsung Secure Folder, Android Private space or the Files by Google Safe folder: open the video there and choose Share or Open with → VR Local Player. For Secure Folder or Private space you can also add this app inside it.</string>
 </resources>

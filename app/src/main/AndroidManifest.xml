@@ -23,12 +23,28 @@
             </intent-filter>
         </activity>
 
+        <!-- Exported so other apps can hand us a video: "Open with" / "Share" from
+             Samsung My Files (including inside Secure Folder), Files by Google
+             (including its Safe folder), Google Photos, etc. -->
         <activity
             android:name=".VrPlayerActivity"
-            android:exported="false"
+            android:exported="true"
+            android:label="@string/open_in_vr"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/Theme.VRLocalPlayer.Fullscreen" />
+            android:theme="@style/Theme.VRLocalPlayer.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
 
     </application>
 
