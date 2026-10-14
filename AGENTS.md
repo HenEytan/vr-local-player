@@ -40,6 +40,10 @@ Changing any of them is a behavior change, never a refactor. Before changing a s
 
 Docs mirror rules and code for humans. When a change makes a guide, design doc, or README wrong, update it in the same change. Don't load a doc to follow a rule.
 
+## Artifacts
+
+`docs/artifacts.json` lists this project's published documents (handbook, screen spec, architecture review…) with the date each was last brought up to date. The PeakWatch dashboard reads it and flags an artifact as stale once code commits land after its `asOf`. When a change alters architecture, capabilities, screens or setup, update the artifact at its existing URL (never publish a new one) and bump `asOf` in the same change.
+
 ## Common tasks
 
 | Command                | Effect                                                                                                              |
