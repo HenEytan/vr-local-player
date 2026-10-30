@@ -18,6 +18,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.exoplayer.ExoPlayer
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -38,6 +39,12 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
     private var player: ExoPlayer? = null
     private lateinit var glView: StereoGLSurfaceView
     private lateinit var currentValues: VrSettings.Values
+
+    // The mode the viewer chose; an automatic switch to flat for an SBS file is not saved over it.
+    private var chosenDuplicate = true
+    private var savedView: AutoFit.View? = null
+    private var videoLayout = AutoFit.Layout.MONO
+    private var autoFitDone = false
 
     private lateinit var videoUri: Uri
     private var videoName = ""
@@ -60,6 +67,7 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
     private lateinit var tvZoom: TextView
     private lateinit var tvPanX: TextView
     private lateinit var tvPanY: TextView
+    private lateinit var switchVrMode: SwitchMaterial
 
     private val tick = object : Runnable {
         override fun run() {
@@ -96,6 +104,9 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
 
         val requestedDuplicate = intent.getBooleanExtra(EXTRA_DUPLICATE_SBS, true)
         currentValues = VrSettings.load(this, requestedDuplicate)
+        chosenDuplicate = currentValues.duplicateSbs
+        savedView = VrSettings.loadView(this, uri.toString())
+        savedView?.let { currentValues = currentValues.copy(scale = it.scale, panX = it.panX, panY = it.panY) }
 
         glView.init(currentValues.duplicateSbs, currentValues) { surface ->
             startPlayback(videoUri, surface)
@@ -131,6 +142,10 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
                 scheduleAutoHide()
             }
 
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                applyVideoSize(videoSize)
+            }
+
             override fun onPlayerError(error: PlaybackException) {
                 // 2xxx codes are IO errors: usually the file moved or its access grant expired.
                 val message = if (error.errorCode in 2000..2999) R.string.file_unavailable else R.string.cannot_play
@@ -153,6 +168,35 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         exoPlayer.playWhenReady = true
         exoPlayer.prepare()
         handler.post(tick)
+    }
+
+    /**
+     * Gives the renderer the frame's true shape and, the first time a size arrives, frames the video
+     * for VR: duplication off for an SBS file, and the starting zoom and pan unless the viewer saved their own.
+     */
+    private fun applyVideoSize(videoSize: VideoSize) {
+        val (w, h, ratio) = Triple(videoSize.width, videoSize.height, videoSize.pixelWidthHeightRatio)
+        if (w <= 0 || h <= 0) return
+        videoLayout = AutoFit.layoutOf(w, h, ratio, videoName)
+        glView.stereoRenderer.contentAspect = AutoFit.contentAspect(w, h, ratio, videoLayout)
+        if (autoFitDone) return
+        autoFitDone = true
+
+        val start = AutoFit.startingView(videoLayout, currentValues.duplicateSbs)
+        if (start.duplicateSbs != currentValues.duplicateSbs) {
+            currentValues = currentValues.copy(duplicateSbs = start.duplicateSbs)
+            glView.stereoRenderer.duplicateSbs = start.duplicateSbs
+            switchVrMode.isChecked = start.duplicateSbs
+        }
+        if (savedView == null) applyView(start.view)
+    }
+
+    private fun applyView(view: AutoFit.View) {
+        currentValues = currentValues.copy(scale = view.scale, panX = view.panX, panY = view.panY)
+        glView.stereoRenderer.scale = view.scale
+        glView.stereoRenderer.panX = view.panX
+        glView.stereoRenderer.panY = view.panY
+        refreshViewSliders()
     }
 
     private fun saveProgress() {
@@ -267,7 +311,7 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
     private fun setupControlPanel() {
         panelScroll = findViewById(R.id.panelScroll)
         btnToggle = findViewById(R.id.btnToggleControls)
-        val switchVrMode = findViewById<SwitchMaterial>(R.id.switchVrMode)
+        switchVrMode = findViewById(R.id.switchVrMode)
 
         seekZoom = findViewById(R.id.seekZoom)
         seekPanX = findViewById(R.id.seekPanX)
@@ -304,6 +348,9 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         updatePercentLabel(tvIpd, currentValues.ipdShift)
 
         switchVrMode.setOnCheckedChangeListener { _, isChecked ->
+            // Also fires when applyVideoSize flips the switch; that change is already in currentValues.
+            if (isChecked == currentValues.duplicateSbs) return@setOnCheckedChangeListener
+            chosenDuplicate = isChecked
             currentValues = currentValues.copy(duplicateSbs = isChecked)
             glView.stereoRenderer.duplicateSbs = isChecked
             persist()
@@ -350,13 +397,20 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         })
 
         findViewById<MaterialButton>(R.id.btnResetControls).setOnClickListener {
-            currentValues = VrSettings.Values(duplicateSbs = currentValues.duplicateSbs)
+            // Back to this video's automatic framing, which it gets again on the next open too.
+            val start = AutoFit.startingView(videoLayout, currentValues.duplicateSbs).view
+            currentValues = VrSettings.Values(
+                scale = start.scale, panX = start.panX, panY = start.panY,
+                duplicateSbs = currentValues.duplicateSbs
+            )
             glView.stereoRenderer.scale = currentValues.scale
             glView.stereoRenderer.panX = currentValues.panX
             glView.stereoRenderer.panY = currentValues.panY
             glView.stereoRenderer.gap = currentValues.gap
             glView.stereoRenderer.ipdShift = currentValues.ipdShift
-            persist()
+            VrSettings.save(this, currentValues.copy(duplicateSbs = chosenDuplicate))
+            VrSettings.clearView(this, videoUri.toString())
+            savedView = null
 
             seekZoom.progress = fractionToProgress(currentValues.scale, VrSettings.SCALE_MIN, VrSettings.SCALE_MAX, seekZoom.max)
             seekPanX.progress = fractionToProgress(currentValues.panX, VrSettings.PAN_MIN, VrSettings.PAN_MAX, seekPanX.max)
@@ -372,7 +426,10 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
     }
 
     private fun persist() {
-        VrSettings.save(this, currentValues)
+        VrSettings.save(this, currentValues.copy(duplicateSbs = chosenDuplicate))
+        val view = AutoFit.View(currentValues.scale, currentValues.panX, currentValues.panY)
+        VrSettings.saveView(this, videoUri.toString(), view)
+        savedView = view
     }
 
     private fun onChange(action: (Int) -> Unit) = object : SeekBar.OnSeekBarChangeListener {
