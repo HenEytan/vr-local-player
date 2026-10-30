@@ -19,8 +19,15 @@ with a live control panel for zoom, position, eye gap, and eye alignment.
   - **Eye alignment (IPD)** (shifts each eye's image toward or away from
     center, for matching your own interpupillary distance)
   - **VR Duplicate Mode** on/off, switchable without leaving the player
-  All values persist across sessions (`VrSettings`, backed by
-  SharedPreferences), with a one tap Reset to defaults.
+  Zoom and position are remembered per video; gap, alignment and mode are
+  global (`VrSettings`, backed by SharedPreferences). Reset returns to the
+  video's automatic framing and the default gap and alignment.
+- **Auto fit** (`AutoFit`): when a video loads it is drawn at its true
+  shape (letterboxed, never stretched) and framed for VR as a starting
+  point: centered, at 90% of each eye so the edges stay clear of the lens
+  rim. A file that is already side by side (a 32:9-or-wider frame, or
+  `SBS` / `HSBS` / `FSBS` / `LR` in its name) is played with duplication
+  off, each half landing in its own eye.
 - `StereoRenderer` creates an external OES texture + `SurfaceTexture` and
   hands a `Surface` to ExoPlayer (Media3), so the decoder writes frames
   straight into the GL texture. Each draw call renders that texture through
@@ -54,9 +61,8 @@ To build locally instead:
   correction, it's a plain SBS duplicate, which many simple Cardboard
   viewers don't need, but if your headset expects distortion corrected
   output you'll want to add that to the fragment shader per eye.
-- If a video is already authored in side by side format, turn off
-  "VR Duplicate Mode" in the control panel before playing it, since
-  duplicating an already SBS video would show two half width frames
-  instead of one full stereo pair.
+- A side by side video that Auto fit can't recognise (a 16:9 half SBS
+  file without an SBS tag in its name) still needs "VR Duplicate Mode"
+  turned off by hand, or each eye shows both halves.
 - Supported formats depend on the device's decoders via ExoPlayer/Media3
   (mp4/H.264/H.265, mkv, webm, etc).

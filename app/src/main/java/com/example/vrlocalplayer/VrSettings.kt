@@ -12,6 +12,8 @@ object VrSettings {
     private const val KEY_GAP = "gap"
     private const val KEY_IPD_SHIFT = "ipd_shift"
     private const val KEY_DUPLICATE = "duplicate_sbs"
+    // Per-video zoom and pan, keyed by the video's URI; gap and IPD stay global (they fit the headset, not the video).
+    private const val KEY_VIEW_PREFIX = "view:"
 
     const val SCALE_MIN = 0.5f
     const val SCALE_MAX = 4.0f
@@ -60,4 +62,17 @@ object VrSettings {
             .putBoolean(KEY_DUPLICATE, values.duplicateSbs)
             .apply()
     }
+
+    fun loadView(context: Context, uri: String): AutoFit.View? =
+        AutoFit.View.decode(prefs(context).getString(KEY_VIEW_PREFIX + uri, null))
+
+    fun saveView(context: Context, uri: String, view: AutoFit.View) {
+        prefs(context).edit().putString(KEY_VIEW_PREFIX + uri, view.encode()).apply()
+    }
+
+    fun clearView(context: Context, uri: String) {
+        prefs(context).edit().remove(KEY_VIEW_PREFIX + uri).apply()
+    }
+
+    private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 }

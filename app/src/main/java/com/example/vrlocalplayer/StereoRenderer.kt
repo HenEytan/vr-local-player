@@ -46,6 +46,9 @@ class StereoRenderer(
     @Volatile var gap: Float = initial.gap
     @Volatile var ipdShift: Float = initial.ipdShift
 
+    /** Display aspect of the video frame; 0 until the player reports its size, and nothing is drawn till then. */
+    @Volatile var contentAspect: Float = 0f
+
     private val quadVertices = floatArrayOf(
         -1f, -1f, 0f,
         1f, -1f, 0f,
@@ -137,28 +140,33 @@ class StereoRenderer(
         }
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        if (contentAspect <= 0f || surfaceHeight == 0) return
 
         if (duplicateSbs) {
             val gapPx = (gap.coerceIn(0f, 0.9f) * surfaceWidth).toInt()
             val eyeWidth = ((surfaceWidth - gapPx) / 2).coerceAtLeast(1)
 
+            val fit = AutoFit.fitExtent(contentAspect, eyeWidth.toFloat() / surfaceHeight)
+
             GLES20.glViewport(0, 0, eyeWidth, surfaceHeight)
-            drawQuad(panX + ipdShift, panY, scale)
+            drawQuad(panX + ipdShift, panY, fit)
 
             GLES20.glViewport(surfaceWidth - eyeWidth, 0, eyeWidth, surfaceHeight)
-            drawQuad(panX - ipdShift, panY, scale)
+            drawQuad(panX - ipdShift, panY, fit)
         } else {
+            val fit = AutoFit.fitExtent(contentAspect, surfaceWidth.toFloat() / surfaceHeight)
             GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight)
-            drawQuad(panX, panY, scale)
+            drawQuad(panX, panY, fit)
         }
     }
 
-    private fun drawQuad(offsetX: Float, offsetY: Float, quadScale: Float) {
+    /** [fit] is the letterboxed half-extent that keeps the frame's shape; zoom scales on top of it. */
+    private fun drawQuad(offsetX: Float, offsetY: Float, fit: Pair<Float, Float>) {
         GLES20.glUseProgram(program)
 
         Matrix.setIdentityM(modelMatrix, 0)
         Matrix.translateM(modelMatrix, 0, offsetX * 2f, offsetY * 2f, 0f)
-        Matrix.scaleM(modelMatrix, 0, quadScale, quadScale, 1f)
+        Matrix.scaleM(modelMatrix, 0, scale * fit.first, scale * fit.second, 1f)
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId)
